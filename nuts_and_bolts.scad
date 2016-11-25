@@ -40,26 +40,37 @@ M = [-1, 0, 1, 2, 3, 4, 5, 6, 7,
 ]
 */
 
-//Based on: http://www.roymech.co.uk/Useful_Tables/Screws/Hex_Screws.htm
-METRIC_NUT_AC_WIDTHS =
-[       -1,     -1, 006.40, 008.10, 009.20, 011.50,     -1, 015.00, 
+//ISO4017
+HEX_HEAD_AC_WIDTHS =
+[       -1, 004.32, 006.01, 007.66, 008.79, 011.05,     -1, 014.38, 
 //    M1      M2      M3      M4      M5      M6      M7      M8
-    019.60, 022.10,     -1, 027.70,     -1, 034.60,     -1, 041.60, 
+    018.90, 021.10, 024.49, 026.75, 030.14, 033.53, 035.72, 039.98, 
 //    M10     M12     M14     M16     M18     M20     M22     M24
-        -1, 053.10,     -1, 063.50,     -1,     -1,     -1,     -1, 
+    045.20, 050.85, 055.37, 060.79, 069.28, 075.06, 080.83, 086.60, 
 //    M27     M30     M33     M36     M39     M42     M45     M48
-        -1,     -1,     -1
+    092.38, 098.15, 109.70
+//    M52     M56     M64
+];
+HEX_HEAD_SOCKET_WIDTHS =
+[       -1, 007.60, 009.50, 011.30, 012.50, 015.00, 016.30, 018.80, 
+//    M1      M2      M3      M4      M5      M6      M7      M8
+    027.00, 032.00, 035.00, 039.00, 043.00, 047.00, 052.00, 054.00, 
+//    M10     M12     M14     M16     M18     M20     M22     M24
+    060.00, 067.00, 071.00, 077.00, 084.00, 093.00, 100.00, 104.00, 
+//    M27     M30     M33     M36     M39     M42     M45     M48
+    109.00, 115.00, 130.00
 //    M52     M56     M64
 ];
 
-METRIC_NUT_THICKNESS =
-[       -1,     -1, 002.40, 003.20, 004.00, 005.00,     -1, 006.50, 
+//ISO4017
+HEX_HEAD_THICKNESS =
+[       -1, 001.40, 002.00, 002.80, 003.50, 004.00,     -1, 005.30, 
 //    M1      M2      M3      M4      M5      M6      M7      M8
-    008.00, 010.00,     -1, 013.00,     -1, 016.00,     -1, 019.00, 
+    006.40, 007.50, 008.80, 010.00, 011.50, 012.50, 014.00, 015.00, 
 //    M10     M12     M14     M16     M18     M20     M22     M24
-        -1, 024.00,     -1, 029.00,     -1,     -1,     -1,     -1, 
+    017.00, 018.70, 021.00, 022.50, 025.00, 026.00, 028.00, 030.00, 
 //    M27     M30     M33     M36     M39     M42     M45     M48
-        -1,     -1,     -1
+    033.00, 035.00, 040.00
 //    M52     M56     M64
 ];
 
@@ -80,8 +91,8 @@ COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS =
 module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 {
 	//takes a metric screw/nut size and looksup nut dimensions
-	radius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance;
-	height = METRIC_NUT_THICKNESS[M[size]]+tolerance;
+	radius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance;
+	height = HEX_HEAD_THICKNESS[M[size]]+tolerance;
 	if (proj == -1)
 	{
 		translate([0 ,0 , -sunken-EPS])
@@ -100,7 +111,7 @@ module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 
 module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
 {
-	height = METRIC_NUT_THICKNESS[M[size]]+tolerance;
+	height = HEX_HEAD_THICKNESS[M[size]]+tolerance;
 	nutHole(size, units, tolerance, proj, sunken=height);
 }
 
@@ -108,8 +119,8 @@ module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
 module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 {
 	boltRadius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
-	nutRadius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance;
-	nutHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	nutRadius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance;
+	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	echo("radii=", [boltRadius, nutRadius, nutHeight]);
 	difference() {
 		translate([0 ,0 , 0])
@@ -121,7 +132,7 @@ module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 
 module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 {
-	nutHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 
 	translate([0,0,-nutHeight-EPS])
 		nut(size, units, tolerance, proj);		
@@ -133,8 +144,8 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
 //TODO: proper screw cap values
-	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
-	capRadius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
+	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	capRadius = HEX_HEAD_SOCKET_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
 
 	if (proj == -1)
 	{
@@ -142,7 +153,7 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 		{
 			translate([0, 0, -capHeight*4])
 				cylinder(r= capRadius, h=capHeight*4 + EPS);
-			cylinder(r = radius, h = length+EPS);
+			cylinder(r = radius+0.2, h = length+EPS);
 		}
 	}
 	if (proj == 1)
@@ -160,7 +171,7 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 module boltHole_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
-	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	translate([0,0,capHeight])
 		boltHole(size, units, length, tolerance, proj);
 
@@ -170,8 +181,8 @@ module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
 //TODO: proper screw cap values
-	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
-	capRadius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
+	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	capRadius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
 
 	if (proj == -1)
 	{
@@ -198,7 +209,7 @@ module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
 module bolt_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 
-	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	translate([0,0,capHeight])
 		bolt(size, units, length, tolerance, proj);
 }
