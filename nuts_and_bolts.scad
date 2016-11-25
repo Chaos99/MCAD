@@ -13,6 +13,7 @@ module SKIPtestNutsAndBolts()
 
 MM = "mm";
 INCH = "inch"; //Not yet supported
+EPS = 0.0015; // to compensate z-fighting
 
 //conversion from M-number to index for shorter lists
 //fractional sizes (M3.5) not yet supported
@@ -83,7 +84,8 @@ module nutHole(size, units=MM, tolerance = +0.0001, proj = -1)
 	height = METRIC_NUT_THICKNESS[M[size]]+tolerance;
 	if (proj == -1)
 	{
-		cylinder(r= radius, h=height, $fn = 6, center=[0,0]);
+		translate([0 ,0 , -EPS])
+			cylinder(r= radius, h=height+EPS, $fn = 6, center=[0,0]);
 	}
 	if (proj == 1)
 	{
@@ -105,9 +107,12 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 	if (proj == -1)
 	{
-	translate([0, 0, -capHeight])
-		cylinder(r= capRadius, h=capHeight);
-	cylinder(r = radius, h = length);
+		translate([0, 0, -EPS])
+		{
+			translate([0, 0, -capHeight])
+				cylinder(r= capRadius, h=capHeight);
+			cylinder(r = radius, h = length+EPS);
+		}
 	}
 	if (proj == 1)
 	{
@@ -119,4 +124,5 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 			square([capRadius*2, capHeight]);
 		square([radius*2, length]);
 	}
+
 }
