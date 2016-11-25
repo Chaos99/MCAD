@@ -77,15 +77,15 @@ COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS =
 ];
 	
 
-module nutHole(size, units=MM, tolerance = +0.0001, proj = -1)
+module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 {
 	//takes a metric screw/nut size and looksup nut dimensions
 	radius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance;
 	height = METRIC_NUT_THICKNESS[M[size]]+tolerance;
 	if (proj == -1)
 	{
-		translate([0 ,0 , -EPS])
-			cylinder(r= radius, h=height+EPS, $fn = 6, center=[0,0]);
+		translate([0 ,0 , -sunken-EPS])
+			cylinder(r= radius, h=4*height+EPS, $fn = 6, center=[0,0]);
 	}
 	if (proj == 1)
 	{
@@ -98,6 +98,37 @@ module nutHole(size, units=MM, tolerance = +0.0001, proj = -1)
 	}
 }
 
+module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
+{
+	height = METRIC_NUT_THICKNESS[M[size]]+tolerance;
+	nutHole(size, units, tolerance, proj, sunken=height);
+}
+
+
+module nut(size, units=MM, tolerance = +0.0001, proj = -1)
+{
+	boltRadius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
+	nutRadius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance;
+	nutHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	echo("radii=", [boltRadius, nutRadius, nutHeight]);
+	difference() {
+		translate([0 ,0 , 0])
+			cylinder(r= nutRadius+tolerance, h=nutHeight, $fn = 6, center=[0,0]);
+		translate([0,0,-EPS])
+			cylinder(r = boltRadius, h = nutHeight+2*EPS, center=false);
+	}
+}
+
+module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
+{
+	nutHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+
+	translate([0,0,-nutHeight-EPS])
+		nut(size, units, tolerance, proj);		
+}
+
+
+
 module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
@@ -109,8 +140,8 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 	{
 		translate([0, 0, -EPS])
 		{
-			translate([0, 0, -capHeight])
-				cylinder(r= capRadius, h=capHeight);
+			translate([0, 0, -capHeight*4])
+				cylinder(r= capRadius, h=capHeight*4 + EPS);
 			cylinder(r = radius, h = length+EPS);
 		}
 	}
@@ -125,4 +156,49 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 		square([radius*2, length]);
 	}
 
+}
+
+module boltHole_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
+{
+	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	translate([0,0,capHeight])
+		boltHole(size, units, length, tolerance, proj);
+
+}
+
+module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
+{
+	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
+//TODO: proper screw cap values
+	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	capRadius = METRIC_NUT_AC_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
+
+	if (proj == -1)
+	{
+		translate([0, 0, -EPS])
+		{
+			translate([0, 0, -capHeight])
+				cylinder(r= capRadius, h=capHeight+EPS, $fn = 6, center=[0,0]);
+			cylinder(r = radius, h = length+EPS);
+		}
+	}
+	if (proj == 1)
+	{
+		circle(r = radius);
+	}
+	if (proj == 2)
+	{
+		translate([-capRadius/2, -capHeight])
+			square([capRadius*2, capHeight]);
+		square([radius*2, length]);
+	}
+
+}
+
+module bolt_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
+{
+
+	capHeight = METRIC_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	translate([0,0,capHeight])
+		bolt(size, units, length, tolerance, proj);
 }
