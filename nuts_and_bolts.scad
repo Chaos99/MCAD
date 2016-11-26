@@ -76,6 +76,18 @@ HEX_HEAD_THICKNESS =
 //    M52     M56     M64
 ];
 
+//ISO4032
+HEX_NUT_THICKNESS =
+[   000.80, 001.60, 002.40, 003.20, 004.70, 005.20, 005.50, 006.80, 
+//    M1      M2      M3      M4      M5      M6      M7      M8
+    008.40, 010.80, 012.80, 014.80, 015.80, 018.00, 019.40, 021.50, 
+//    M10     M12     M14     M16     M18     M20     M22     M24
+    023.80, 025.60, 028.70, 031.00, 033.40, 034.00, 036.00, 038.00, 
+//    M27     M30     M33     M36     M39     M42     M45     M48
+    042.00, 045.00, 051.00
+//    M52     M56     M64
+];
+
 
 COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS =
 //based on max values
@@ -99,7 +111,7 @@ module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 {
 	//takes a metric screw/nut size and looksup nut dimensions
 	radius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance;
-	height = HEX_HEAD_THICKNESS[M[size]]+tolerance;
+	height = HEX_NUT_THICKNESS[M[size]]+tolerance;
 	if (proj == -1)
 	{
 		translate([0 ,0 , -sunken-EPS])
@@ -123,7 +135,7 @@ module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 */
 module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
 {
-	height = HEX_HEAD_THICKNESS[M[size]]+tolerance;
+	height = HEX_NUT_THICKNESS[M[size]]+tolerance;
 	nutHole(size, units, tolerance, proj, sunken=height);
 }
 
@@ -135,7 +147,7 @@ module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 {
 	boltRadius = COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS[M[size]]/2+tolerance;
 	nutRadius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance;
-	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	nutHeight = HEX_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	echo("radii=", [boltRadius, nutRadius, nutHeight]);
 	difference() {
 		translate([0 ,0 , 0])
@@ -152,7 +164,7 @@ module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 */
 module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 {
-	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
+	nutHeight = HEX_NUT_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 
 	translate([0,0,-nutHeight+EPS])
 		nut(size, units, tolerance, proj);		
