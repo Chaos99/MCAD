@@ -40,6 +40,7 @@ M = [-1, 0, 1, 2, 3, 4, 5, 6, 7,
 ]
 */
 
+// value tables to follow. see below for functions
 //ISO4017
 HEX_HEAD_AC_WIDTHS =
 [       -1, 004.32, 006.01, 007.66, 008.79, 011.05,     -1, 014.38, 
@@ -90,7 +91,10 @@ COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS =
 ];
 
 
-
+/**
+* Creates a hex-shaped object that can be used in a difference{} to cut out a 
+* shape to fit a hex nut in. Aligns the object-facing side of the nut to the origin
+*/
 module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 {
 	//takes a metric screw/nut size and looksup nut dimensions
@@ -112,13 +116,21 @@ module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 	}
 }
 
+/**
+* Creates a hex-shaped object that can be used in a difference{} to cut out a 
+* shape to fit a hex nut in. Aligns the far-facing side of the nut to the origin,
+* so that without an additional translate(), the nut will be sunken in the object
+*/
 module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
 {
 	height = HEX_HEAD_THICKNESS[M[size]]+tolerance;
 	nutHole(size, units, tolerance, proj, sunken=height);
 }
 
-
+/**
+* Creates a hex-nut object. Aligns the object-facing side of the nut to the origin
+* No threads are rendered. Inner diameter is inside of thread.
+*/
 module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 {
 	boltRadius = COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS[M[size]]/2+tolerance;
@@ -133,6 +145,11 @@ module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 	}
 }
 
+/**
+* Creates a hex-nut object. Aligns the far-facing side of the nut to the origin,
+* so that without an additional translate(), the nut will be sunken in the object
+* No threads are rendered. Inner diameter is inside of thread.
+*/
 module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 {
 	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
@@ -142,7 +159,11 @@ module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 }
 
 
-
+/**
+* Creates a hex-cap-plus-bolt-shaped object that can be used in a difference{} to cut 
+* out a shape to fit a hex bolt in. Aligns the object-facing side of the cap to the 
+* origin, so the cap sits atop the object, while the bolt cuts into it
+*/
 module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	radius = size/2+tolerance;
@@ -172,6 +193,11 @@ module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 }
 
+/**
+* Creates a hex-cap-plus-bolt-shaped object that can be used in a difference{} to cut 
+* out a shape to fit a hex bolt in. Aligns the top-facing side of the cap to the 
+* origin, so cap and bolt are sunken into the object
+*/
 module boltHole_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
@@ -180,6 +206,12 @@ module boltHole_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 }
 
+/**
+* Creates a hex-cap-plus-bolt-shaped object 
+* Aligns the object-facing side of the cap to the 
+* origin, so the cap sits atop the object, while the bolt sticks into it.
+* No threads are rendered. Outer diameter is outside of thread.
+*/
 module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 	radius = size/2+tolerance;
@@ -209,6 +241,11 @@ module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 }
 
+/**
+* Creates a hex-cap-plus-bolt-shaped object. Aligns the top-facing side of the 
+* cap to the origin, so the cap is sunken into the object
+* No threads are rendered. Outer diameter is outside of thread.
+*/
 module bolt_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
 
