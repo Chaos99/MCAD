@@ -40,7 +40,11 @@ Currently Provided Tools:
 
 Other tools (alpha and beta quality):
 
-* nuts_and_bolts.scad: for creating metric and imperial bolt/nut holes
+* nuts_and_bolts.scad: for creating metric bolts/nuts and corresponding holes (hex nuts/bolts only atm)
+    - nutHole(size), boltHole(size, length), nut(size), bolt(size, length)
+        - origin point is below nut/cap, so nut and bolt cap will be on top
+    -  nutHole_sunken(size), boltHole_sunken(size, length), nut_sunken(size), bolt_sunken(size, length)
+        - origin point is on top of nut/cap, so nut and bolt cap will be sunken into the object
 * bearing.scad: standard/custom bearings
 * screw.scad: screws and augers
 * materials.scad: color definitions for different materials
