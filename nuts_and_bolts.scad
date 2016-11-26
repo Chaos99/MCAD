@@ -51,6 +51,7 @@ HEX_HEAD_AC_WIDTHS =
     092.38, 098.15, 109.70
 //    M52     M56     M64
 ];
+//Source: real world sockets
 HEX_HEAD_SOCKET_WIDTHS =
 [       -1, 007.60, 009.50, 011.30, 012.50, 015.00, 016.30, 018.80, 
 //    M1      M2      M3      M4      M5      M6      M7      M8
@@ -75,18 +76,20 @@ HEX_HEAD_THICKNESS =
 ];
 
 
-COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS =
+COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS =
 //based on max values
-[       -1,     -1, 002.98, 03.978, 04.976, 05.974,     -1, 07.972, 
+[   000.75, 001.60, 002.50, 003.30, 004.20, 005.00, 006.00, 006.80, 
 //    M1      M2      M3      M4      M5      M6      M7      M8
-    09.968, 11.966,     -1, 15.962,     -1, 19.958,     -1, 23.952, 
+    008.50, 010.20, 012.00, 014.00, 015.50, 017.50, 019.50, 021.00, 
 //    M10     M12     M14     M16     M18     M20     M22     M24
-        -1, 29.947,     -1, 35.940,     -1,     -1,     -1,     -1, 
+    024.00, 026.50, 029.50, 032.00, 035.00, 037.50, 040.50, 043.00, 
 //    M27     M30     M33     M36     M39     M42     M45     M48
-        -1,     -1,     -1
+// last three are fine thread only
+    050.50,     -1,     -1
 //    M52     M56     M64
 ];
-	
+
+
 
 module nutHole(size, units=MM, tolerance = +0.2001, proj = -1, sunken = 0)
 {
@@ -118,7 +121,7 @@ module nutHole_sunken(size, units=MM, tolerance = +0.2001, proj = -1)
 
 module nut(size, units=MM, tolerance = +0.0001, proj = -1)
 {
-	boltRadius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
+	boltRadius = COURSE_METRIC_BOLT_INNER_THREAD_DIAMETERS[M[size]]/2+tolerance;
 	nutRadius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance;
 	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	echo("radii=", [boltRadius, nutRadius, nutHeight]);
@@ -134,7 +137,7 @@ module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 {
 	nutHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 
-	translate([0,0,-nutHeight-EPS])
+	translate([0,0,-nutHeight+EPS])
 		nut(size, units, tolerance, proj);		
 }
 
@@ -142,8 +145,8 @@ module nut_sunken(size, units=MM, tolerance = +0.0001, proj = -1)
 
 module boltHole(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
-	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
-//TODO: proper screw cap values
+	radius = size/2+tolerance;
+
 	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	capRadius = HEX_HEAD_SOCKET_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
 
@@ -179,7 +182,7 @@ module boltHole_sunken(size, units=MM, length, tolerance = +0.0001, proj = -1)
 
 module bolt(size, units=MM, length, tolerance = +0.0001, proj = -1)
 {
-	radius = COURSE_METRIC_BOLT_MAJOR_THREAD_DIAMETERS[M[size]]/2+tolerance;
+	radius = size/2+tolerance;
 //TODO: proper screw cap values
 	capHeight = HEX_HEAD_THICKNESS[M[size]]+tolerance; //METRIC_BOLT_CAP_HEIGHTS[size]+tolerance;
 	capRadius = HEX_HEAD_AC_WIDTHS[M[size]]/2+tolerance; //METRIC_BOLT_CAP_RADIUS[size]+tolerance;
